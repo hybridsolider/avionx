@@ -1,25 +1,32 @@
 import csv
+import sqlite3
 
 class Waypoint:
-    def __init__(self, nav_data_file, identifier: str):
-        self.nav_data_file = nav_data_file
-        self.identifier = identifier.upper()
-        self.matches = []
+    def __init__(self, nav_data_file, id: str, latitude, longitude, is_custom_wpt:bool=False):
+        if is_custom_wpt == False:
+            self.nav_data_file = nav_data_file
+            self.identifier = id.upper()
+            self.matches = []
+        else:
+            self.identifier = id.upper()
+            self.latitude = latitude
+            self.longitude = longitude
+            
 
-        # Load all matching rows once
+      
         with open(nav_data_file, newline='') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row["ident"].upper() == self.identifier:
                     self.matches.append(row)
 
-        # If there are matches, pick the first by default
+  
         if self.matches:
             self.data = self.matches[0]
         else:
             self.data = None
 
-        # Populate attributes
+       
         if self.data:
             self.name = self.data.get("name")
             self.type = self.data.get("type")
@@ -31,6 +38,5 @@ class Waypoint:
             self.name = self.type = self.frequency = self.latitude = self.longitude = self.country_code = None
 
     def all_matches(self):
-        """Return a list of all matching waypoints for this identifier"""
-        return self.matches
 
+        return self.matches
