@@ -1,21 +1,51 @@
 import csv
 
-def get_waypoint_info(identifier: str, country: str = None):
-    with open("navaids.csv") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            if row["ident"].upper() == identifier.upper():
-                if country and row["iso_country"] != country:
-                    continue
-                print(f"Identifier: {row['ident']}")
-                print(f"Name: {row['name']}")
-                print(f"Type: {row['type']}")
-                print(f"Frequency: {row['frequency_khz']}")
-                print(f"Latitude: {row['latitude_deg']}")
-                print(f"Longitude: {row['longitude_deg']}")
-                print(f"Country: {row['iso_country']}")
-                return
-    print(f"No waypoint found for {identifier} in {country or 'any country'}")
+nav_data_file = "navaids.csv"
 
-# Example: LDZ VOR in Poland
-get_waypoint_info("LDZ", "PL")
+
+class Waypoint:
+    def __init__(self, nav_data_file, identifier: str):
+        self.nav_data_file = nav_data_file
+        self.identifier = identifier
+
+    def get_identifier(self):
+        with open(self.nav_data_file) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row["ident"].upper() == self.identifier.upper():
+                    return row
+        return None
+    def get_name(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["name"]
+        return None
+    def get_type(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["type"]
+        return None
+    def get_frequency(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["frequency_khz"]
+        return None
+    def get_latitude(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["latitude_deg"]
+        return None
+    def get_longitude(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["longitude_deg"]
+        return None
+    def get_country(self):
+        waypoint = self.get_identifier(self.identifier)
+        if waypoint:
+            return waypoint["iso_country"]
+        return None
+
+
+
+
