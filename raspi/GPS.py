@@ -1,14 +1,16 @@
 import csv
 import sqlite3
+import math
 
+import flight_math
+import settings
 
-
-nav_data_file = "data/map/navdata.csv"
-airport_data_file = "data/map/airports.csv"
-airport_freq_file = "data/map/airport_freqs.csv"
+nav_data_file = settings.nav_data_file
+airport_data_file = settings.airport_data_file
+airport_freq_file = settings.airport_freq_file
 
 class Waypoint:
-    def __init__(self, id: str, latitude, longitude, is_custom_wpt:bool=False):
+    def __init__(self, id: str, latitude=None, longitude=None, is_custom_wpt:bool=False):
         global nav_data_file
         
         if is_custom_wpt == False:
@@ -42,12 +44,12 @@ class Waypoint:
             self.latitude = self.data.get("latitude_deg")
             self.longitude = self.data.get("longitude_deg")
             self.country_code = self.data.get("iso_country")
+            self.magnetic_variation = self.data.get("magnetic_variation_deg")
         else:
             self.name = self.type = self.frequency = self.latitude = self.longitude = self.country_code = None
 
     def all_matches(self):
         return self.matches
-
 
 class Airport_frequency:
     def __init__(self, id: str):
@@ -73,8 +75,6 @@ class Airport_frequency:
                 "description": match.get("description"),
                 "frequency_mhz": match.get("frequency_mhz"),
             }
-
-
 
 class Airport:
     
@@ -112,6 +112,24 @@ class Airport:
 
 
 
-epwa = Airport("epwa")
+        
+    def calc_distance(lat1, lon1, lat2, lon2) -> float:
+        # earth radius
+        # R = 6371.0  km
+        R = 3440.0 # NM
+        
+        #deg -> rad
+        phi1 = math.radians(lat1)
+        phi2 = math.radians(lat2)
+        
+        #calculating Δφ Δλ
+        dphi = math.radians(lat2 - lat1)
+        dlambda = math.radians(lon2 - lon1)
+        
+        # calculating distance
+        a = math.sin(dphi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda/2)**2
+        c = math.atan(math.sqrt(a))
+        
+        return R * c * 2
 
-print(epwa.frequencies)
+
