@@ -1,8 +1,16 @@
 import csv
 import sqlite3
 
+
+
+nav_data_file = "data/map/navdata.csv"
+airport_data_file = "data/map/airports.csv"
+airport_freq_file = "data/map/airport_freqs.csv"
+
 class Waypoint:
-    def __init__(self, nav_data_file, id: str, latitude, longitude, is_custom_wpt:bool=False):
+    def __init__(self, id: str, latitude, longitude, is_custom_wpt:bool=False):
+        global nav_data_file
+        
         if is_custom_wpt == False:
             self.nav_data_file = nav_data_file
             self.identifier = id.upper()
@@ -42,7 +50,9 @@ class Waypoint:
 
 
 class Airport_frequency:
-    def __init__(self, airport_freq_file, id: str):
+    def __init__(self, id: str):
+        global airport_freq_file
+        
         self.airport_freq_file = airport_freq_file
         self.identifier = id.upper()
         self.matches = []
@@ -68,7 +78,8 @@ class Airport_frequency:
 
 class Airport:
     
-    def __init__(self, airport_data_file, id: str):
+    def __init__(self, id: str):
+        global airport_data_file
         self.airport_data_file = airport_data_file
         self.identifier = id.upper()
         self.matches = []
@@ -96,4 +107,11 @@ class Airport:
             self.elevation_ft = self.data.get("elevation_ft")
             self.municipality = self.data.get("municipality")
             self.country_code = self.data.get("iso_country")
-            self.frequencies = Airport_frequency.matches
+            self.frequencies = Airport_frequency(self.identifier).frequency
+            
+
+
+
+epwa = Airport("epwa")
+
+print(epwa.frequencies)
