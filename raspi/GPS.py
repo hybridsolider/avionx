@@ -38,5 +38,62 @@ class Waypoint:
             self.name = self.type = self.frequency = self.latitude = self.longitude = self.country_code = None
 
     def all_matches(self):
-
         return self.matches
+
+
+class Airport_frequency:
+    def __init__(self, airport_freq_file, id: str):
+        self.airport_freq_file = airport_freq_file
+        self.identifier = id.upper()
+        self.matches = []
+        self.frequency = {}
+
+        with open(airport_freq_file, newline='') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row["airport_ident"].upper() == self.identifier:
+                    self.matches.append(row)
+                    
+        for match in self.matches:
+            t = match["type"]  # this is the "main key"
+            
+            self.frequency[t] = {
+                "airport_ident": match.get("airport_ident"),
+                "type": match.get("type"),
+                "description": match.get("description"),
+                "frequency_mhz": match.get("frequency_mhz"),
+            }
+
+
+
+class Airport:
+    
+    def __init__(self, airport_data_file, id: str):
+        self.airport_data_file = airport_data_file
+        self.identifier = id.upper()
+        self.matches = []
+
+
+        with open(airport_data_file, newline='') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row["ident"].upper() == self.identifier:
+                    self.matches.append(row)
+                    
+        
+        
+        if self.matches:
+            self.data = self.matches[0]
+        else:
+            self.data = None
+            
+        if self.data:
+            self.identifier = self.data.get("ident")
+            self.name = self.data.get("name")
+            self.type = self.data.get("type")
+            self.latitude = self.data.get("latitude_deg")
+            self.longitude = self.data.get("longitude_deg")
+            self.elevation_ft = self.data.get("elevation_ft")
+            self.municipality = self.data.get("municipality")
+            self.country_code = self.data.get("iso_country")
+            self.frequencies = Airport_frequency.matches
