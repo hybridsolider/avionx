@@ -57,3 +57,12 @@ def calc_distance(lat1, lon1, lat2, lon2) -> float:
     distance = R * c
     
     return distance
+
+
+def fuel_needed_US_gal(ETE, fuel_burning_rate):
+    return ETE * fuel_burning_rate
+    
+def fuel_needed_kg(fuel_needed_US_gal, weight_per_pound):
+    return round(fuel_needed_US_gal * weight_per_pound / 2.20462, 3)
+
+print(fuel_needed_kg(fuel_needed_US_gal(1.2, 6), 6))
